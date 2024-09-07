@@ -1,0 +1,28 @@
+.wrapper {
+  min-height: 75%;
+}
+
+.options {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  box-sizing: border-box;
+  padding: 24px 36px;
+  gap: 36px;
+  background-color: var(--color-grey-0);
+}
+
+.table-wrapper {
+  width: 100%;
+  max-width: calc(100vw - 72px);
+  height: calc(100% - 180px);
+  max-height: calc(100vh - 300px);
+  min-height: 250px;
+  overflow-x: auto;
+  box-sizing: border-box;
+  border: 1px solid var(--color-grey-2);
+}
+
+.table {
+  min-width: calc(100vw - 12px);
+}

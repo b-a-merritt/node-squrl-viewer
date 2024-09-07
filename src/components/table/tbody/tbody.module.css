@@ -1,0 +1,14 @@
+.tbody tr:nth-child(even) td {
+  background-color: var(--color-grey-1);
+}
+
+.tbody td {
+  padding: 4px 12px;
+}
+
+.tbody td div {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
