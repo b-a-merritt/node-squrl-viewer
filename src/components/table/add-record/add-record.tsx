@@ -8,6 +8,8 @@ import {
   NumericInput,
   TextInput,
 } from "@/components/input";
+import { Toast } from "@/components/toast";
+import { Portal } from "@/components/utility";
 import { AddRecordContext } from "@/context/add-record";
 import { AttributeType } from "@/utils/column-type";
 
@@ -60,98 +62,105 @@ export const AddRecord = ({
   if (!addRecord) return null;
 
   return (
-    <tr>
-      <td>
-        <div className="flex column gap_16">
-          <button className="outline" onClick={handleSubmit}>
-            Insert
-          </button>
-          <button className="outline" onClick={handleReset}>
-            Reset
-          </button>
-        </div>
-      </td>
-      {Object.entries(rows[0]).map(([key, value]) => {
-        if (value === null || value === undefined) {
-          return <td key={`null-value-${id}-${key}`}>null</td>;
-        }
+    <>
+      <Portal>
+        {error && (
+          <Toast message={error} onClose={() => setError(null)} type="error" />
+        )}
+      </Portal>
+      <tr>
+        <td>
+          <div className="flex column gap_16">
+            <button className="outline" onClick={handleSubmit}>
+              Insert
+            </button>
+            <button className="outline" onClick={handleReset}>
+              Reset
+            </button>
+          </div>
+        </td>
+        {Object.entries(rows[0]).map(([key, value]) => {
+          if (value === null || value === undefined) {
+            return <td key={`null-value-${id}-${key}`}>null</td>;
+          }
 
-        switch (types[key]) {
-          case "BOOL":
-            return (
-              <td key={`bool-value-${id}-${key}`}>
-                <BooleanInput
-                  name={key}
-                  onChange={handleChange}
-                  value={state[key]}
-                />
-              </td>
-            );
-          case "BIT":
-          case "INT2":
-          case "INT4":
-          case "INT8":
-          case "FLOAT4":
-          case "FLOAT8":
-          case "NUMERIC":
-            return (
-              <td key={`value-${id}-${key}`}>
-                <NumericInput
-                  name={key}
-                  onChange={handleChange}
-                  value={state[key]}
-                />
-              </td>
-            );
-          case "TIMESTAMP":
-          case "TIMESTAMPTZ":
-          case "TIME":
-          case "TIMETZ":
-            return (
-              <td key={`value-${id}-${key}`}>
-                <DateTimeInput
-                  name={key}
-                  onChange={handleChange}
-                  value={state[key]}
-                />
-              </td>
-            );
-          case "DATE":
-            return (
-              <td key={`value-${id}-${key}`}>
-                <DateInput
-                  name={key}
-                  onChange={handleChange}
-                  value={state[key]}
-                />
-              </td>
-            );
-          case "JSON":
-          case "JSONB":
-          case "CUSTOM_ENUM":
-            if (Array.isArray(value)) {
+          switch (types[key]) {
+            case "BOOL":
               return (
-                <td key={`value-${id}-${key}`}>
-                  <ArrayInput
+                <td key={`bool-value-${id}-${key}`}>
+                  <BooleanInput
                     name={key}
                     onChange={handleChange}
                     value={state[key]}
                   />
                 </td>
               );
-            }
-          default:
-            return (
-              <td key={`value-${id}-${key}`}>
-                <TextInput
-                  name={key}
-                  onChange={handleChange}
-                  value={state[key]}
-                />
-              </td>
-            );
-        }
-      })}
-    </tr>
+            case "BIT":
+            case "INT2":
+            case "INT4":
+            case "INT8":
+            case "FLOAT4":
+            case "FLOAT8":
+            case "NUMERIC":
+              return (
+                <td key={`value-${id}-${key}`}>
+                  <NumericInput
+                    name={key}
+                    onChange={handleChange}
+                    value={state[key]}
+                  />
+                </td>
+              );
+            case "TIMESTAMP":
+            case "TIMESTAMPTZ":
+            case "TIME":
+            case "TIMETZ":
+              return (
+                <td key={`value-${id}-${key}`}>
+                  <DateTimeInput
+                    name={key}
+                    onChange={handleChange}
+                    value={state[key]}
+                  />
+                </td>
+              );
+            case "DATE":
+              return (
+                <td key={`value-${id}-${key}`}>
+                  <DateInput
+                    name={key}
+                    onChange={handleChange}
+                    value={state[key]}
+                  />
+                </td>
+              );
+            case "JSON":
+            case "JSONB":
+            case "CUSTOM_ENUM":
+              if (Array.isArray(value)) {
+                return (
+                  <td key={`value-${id}-${key}`}>
+                    <ArrayInput
+                      name={key}
+                      onChange={handleChange}
+                      value={state[key]}
+                    />
+                  </td>
+                );
+              }
+            default:
+              return (
+                <td key={`value-${id}-${key}`}>
+                  <TextInput
+                    name={key}
+                    onChange={handleChange}
+                    value={state[key]}
+                  />
+                </td>
+              );
+          }
+        })}
+      </tr>
+    </>
   );
 };

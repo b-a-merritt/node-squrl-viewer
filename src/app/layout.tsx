@@ -42,7 +42,10 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           </div>
         </nav>
         <AddRecordContextProvider>
-          <main>{children}</main>
+          <main>
+            {children}
+            <div id="root-portal-wrapper" />
+          </main>
         </AddRecordContextProvider>
       </body>
     </html>
