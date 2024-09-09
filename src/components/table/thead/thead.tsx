@@ -11,7 +11,7 @@ export const THead = ({ columns }: THeadProps) => {
     <thead className={styles["thead"]}>
       <tr>
         <th>
-          <div>index</div>
+          <div>Actions</div>
         </th>
         {columns.map((columnName, i) => (
           <Th key={columnName + i} name={columnName} />

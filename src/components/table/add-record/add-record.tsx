@@ -19,20 +19,26 @@ interface AddRecordProps {
     data: Record<string, unknown>
   ) => Promise<string | unknown[]>;
   name: string;
-  rows: Record<string, unknown>[];
+  exRow?: Record<string, unknown>;
   types: Record<string, AttributeType>;
 }
 
 export const AddRecord = ({
   insertRecord,
   name,
-  rows,
+  exRow,
   types,
 }: AddRecordProps) => {
   const { addRecord, setAddRecord } = React.useContext(AddRecordContext);
   const [state, setState] = React.useState<Record<string, unknown>>({});
   const [error, setError] = React.useState<null | string>(null);
   const id = React.useId();
+
+  if (!addRecord) return null;
+
+  const entries: [string, unknown][] = exRow
+    ? Object.entries(exRow)
+    : Object.keys(types).map((key) => [key, null]);
 
   const handleChange = (key: string, value: unknown) => {
     setState((prev) => ({
@@ -59,8 +65,6 @@ export const AddRecord = ({
     }
   };
 
-  if (!addRecord) return null;
-
   return (
     <>
       <Portal>
@@ -79,11 +83,7 @@ export const AddRecord = ({
             </button>
           </div>
         </td>
-        {Object.entries(rows[0]).map(([key, value]) => {
-          if (value === null || value === undefined) {
-            return <td key={`null-value-${id}-${key}`}>null</td>;
-          }
-
+        {entries.map(([key, value]) => {
           switch (types[key]) {
             case "BOOL":
               return (

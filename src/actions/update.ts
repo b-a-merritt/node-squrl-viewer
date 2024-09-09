@@ -4,10 +4,23 @@ import { SQURL } from "postgresqurl";
 import { db } from "@/config/db";
 import { environment } from "@/config/environment";
 
-export const destroy = async (
+export const update = async (
   tableName: string,
   data: Record<string, unknown>,
 ) => {
+  if (!tableName) {
+    return `syntax error at or near "INSERT INTO ""`
+  }
+  if (!Object.keys(data).length) {
+    return `all null values of relation "${tableName}" violates not-null constraint`;
+  }
+
+  for (const [key, val] of Object.entries(data)) {
+    if (val === null) {
+      delete data[key]
+    }
+  }
+
   const inner = new SQURL("table_constraints", { schema: "information_schema" })
     .as('tc')
     .select([])
@@ -66,21 +79,23 @@ AS t WHERE t."columnName" = t."columnsColumnName"`;
     const response = await db.query(outer, inner.placeholders);
     pk = response.rows?.[0].columnName;
   } catch (error) {
+    console.log(error)
     return `Unable to find appropriate primary key for table ${tableName}`
   }
   
   const q = new SQURL(tableName, { schema: environment.DB_SCHEMA })
-    .delete()
+    .update(data)
     .returning(["*"])
     .where([
       {
-        field: pk,
         table: tableName,
+        field: pk,
         equals: data[pk] as string | number | boolean,
-      },
+      }
     ])
     .query();
-
+console.log(q.query)
+console.log(q.placeholders)
   try {
     const request = await db.query(q.query, q.placeholders);
     revalidatePath("/");
